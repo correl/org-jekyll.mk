@@ -12,15 +12,17 @@ ORG_DIR ?= .
 JEKYLL_DIR ?= org-jekyll
 SITE_DIR ?= _site
 OUTPUT_DIR = $(JEKYLL_DIR)/_org
+CODE_DIR = $(JEKYLL_DIR)/_src
 
 JEKYLL_CONFIG := $(shell tempfile -s .yml)
 JEKYLL_OPTS += -s $(JEKYLL_DIR) --config $(JEKYLL_CONFIG)
 
 org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
-tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle ' $(ORG_DIR)/*.org)
-tangle_output_files := $(patsubst %.org,$(OUTPUT_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
+tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
+tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
+tangle_tmp := $(shell tempfile -s .org)
 org_verbose	= @echo " ORG  " $(?F);
-tangle_verbose	=  echo " CODE " $(?F);
+tangle_verbose	= @echo " CODE " $(?F);
 jekyll_verbose  = @echo " BUILD jekyll";
 serve_verbose   = @echo " SERVE jekyll";
 
@@ -30,7 +32,8 @@ all: jekyll
 
 clean:
 	rm -rf	$(SITE_DIR) \
-		$(OUTPUT_DIR)
+		$(OUTPUT_DIR) \
+		$(CODE_DIR)
 
 jekyll-config:
 	@echo "\
@@ -49,10 +52,13 @@ permalinks: pretty \n\
 collections: \n\
   org: \n\
     output: true \n\
+  src: \n\
+    output: true \n\
  \n\
 defaults: \n\
   - scope: \n\
       path: \"\" \n\
+      type: \"org\" \n\
     values: \n\
       layout: \"page\" \n\
       author: \"$(SITE_AUTHOR)\" \n\
@@ -67,7 +73,10 @@ serve: org-html org-code jekyll-config
 	@rm $(JEKYLL_CONFIG)
 
 $(OUTPUT_DIR):
-	mkdir -p $(OUTPUT_DIR)
+	mkdir -p $@
+
+$(CODE_DIR):
+	mkdir -p $@
 
 $(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
 	$(org_verbose) emacs --batch -u ${USER} --eval " \
@@ -95,12 +104,12 @@ $(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
   (org-publish-current-file 't)) \
 " 2>/dev/null
 
-$(OUTPUT_DIR)/%.src.txt: $(ORG_DIR)/%.org
-	@if grep -q '#+BEGIN_SRC .* :tangle yes' $<; then \
+$(CODE_DIR)/%.src.txt: $(ORG_DIR)/%.org
+	@sed "s/:tangle yes/:tangle $(subst /,\/,$(abspath $@))/g" "$<" > $(tangle_tmp)
 	$(tangle_verbose) emacs	--batch -u ${USER} \
 		--eval "(require 'org)" \
-		--eval "(org-babel-tangle-file \"$<\" \"$(abspath $@)\")" 2>/dev/null ; \
-	fi
+		--eval "(org-babel-tangle-file \"$(tangle_tmp)\")" 2>/dev/null ;
+	@rm $(tangle_tmp)
 
 org-html: $(OUTPUT_DIR) $(org_files)
-org-code: $(OUTPUT_DIR) $(tangle_output_files)
+org-code: $(CODE_DIR) $(tangle_output_files)

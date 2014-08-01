@@ -2,8 +2,8 @@
 layout: default
 ---
 
-{% assign scheme_url = page.url | replace: '.html','.src.txt' %}
-{% assign scheme_filename = scheme_url | remove: '/org/' %}
+{% assign scheme_filename = page.url | replace: '.html','.src.txt' | remove: '/org/' %}
+{% assign scheme_url = scheme_filename | prepend: '/src/' %}
 
 <div class="post">
 
