@@ -21,10 +21,16 @@ org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR
 tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
 tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
 tangle_tmp := $(shell tempfile -s .org)
-org_verbose	= @echo " ORG  " $(?F);
-tangle_verbose	= @echo " CODE " $(?F);
-jekyll_verbose  = @echo " BUILD jekyll";
-serve_verbose   = @echo " SERVE jekyll";
+
+V ?= 0
+org_verbose_0		= @echo " ORG  " $(?F);
+org_verbose		= $(org_verbose_$(V))
+tangle_verbose_0	= @echo " CODE " $(?F);
+tangle_verbose		= $(tangle_verbose_$(V))
+jekyll_verbose_0	= @echo " BUILD jekyll";
+jekyll_verbose		= $(jekyll_verbose_$(V))
+serve_verbose_0		= @echo " SERVE jekyll";
+serve_verbose		= $(jekyll_verbose_$(V))
 
 default: all
 

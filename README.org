@@ -46,3 +46,9 @@
 
      #+END_SRC
      
+   - Setting the environment variable V to a value other than 0 will display
+     the full command being run during the various build steps:
+
+     #+BEGIN_EXAMPLE
+     $ V=1 make all
+     #+END_EXAMPLE
