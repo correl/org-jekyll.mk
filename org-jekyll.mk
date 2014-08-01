@@ -21,7 +21,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 assets = index.html css _includes _layouts
 asset_targets = $(addprefix $(BUILD_DIR)/,$(assets))
 org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
-tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
+tangle_org_files := $(shell grep -il '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
 tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
 tangle_tmp := $(shell tempfile -s .org)
 
