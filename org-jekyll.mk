@@ -9,14 +9,17 @@ SITE_AUTHOR ?=
 SITE_AUTHOR_EMAIL ?=
 
 ORG_DIR ?= .
-JEKYLL_DIR ?= org-jekyll
+BUILD_DIR ?= _build
 SITE_DIR ?= _site
-OUTPUT_DIR = $(JEKYLL_DIR)/_org
-CODE_DIR = $(JEKYLL_DIR)/_src
+OUTPUT_DIR = $(BUILD_DIR)/_org
+CODE_DIR = $(BUILD_DIR)/_src
 
 JEKYLL_CONFIG := $(shell tempfile -s .yml)
-JEKYLL_OPTS += -s $(JEKYLL_DIR) --config $(JEKYLL_CONFIG)
+JEKYLL_OPTS += -s $(BUILD_DIR) --config $(JEKYLL_CONFIG)
 
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+assets = index.html css _includes _layouts
+asset_targets = $(addprefix $(BUILD_DIR)/,$(assets))
 org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
 tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
 tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
@@ -37,9 +40,8 @@ default: all
 all: jekyll
 
 clean:
-	rm -rf	$(SITE_DIR) \
-		$(OUTPUT_DIR) \
-		$(CODE_DIR)
+	rm -rf	$(BUILD_DIR) \
+		$(SITE_DIR)
 
 jekyll-config:
 	@echo "\
@@ -70,19 +72,27 @@ defaults: \n\
       author: \"$(SITE_AUTHOR)\" \n\
 " > $(JEKYLL_CONFIG)
 
-jekyll: org-html org-code jekyll-config
+jekyll: assets org-html org-code jekyll-config
 	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
 	@rm $(JEKYLL_CONFIG)
 
-serve: org-html org-code jekyll-config
+serve: assets org-html org-code jekyll-config
 	$(serve_verbose) jekyll serve $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
 	@rm $(JEKYLL_CONFIG)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 $(OUTPUT_DIR):
 	mkdir -p $@
 
 $(CODE_DIR):
 	mkdir -p $@
+
+assets: $(BUILD_DIR) $(asset_targets)
+
+$(asset_targets):
+	cp -a $(addprefix $(dir $(mkfile_path)),$(notdir $@)) $@
 
 $(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
 	$(org_verbose) emacs --batch -u ${USER} --eval " \
