@@ -1,16 +1,28 @@
-.PHONY: default all clean jekyll serve
+.PHONY: default all clean jekyll serve jekyll-config
+
+SITE_NAME ?= My Documents
+SITE_TITLE ?= Emacs Org-Mode Documents
+SITE_DESCRIPTION ?=
+SITE_BASEURL ?=
+SITE_URL ?=
+SITE_AUTHOR ?=
+SITE_AUTHOR_EMAIL ?=
 
 ORG_DIR ?= .
 JEKYLL_DIR ?= org-jekyll
-OUTPUT_DIR = $(JEKYLL_DIR)/_org
 SITE_DIR ?= _site
-JEKYLL_OPTS += -s $(JEKYLL_DIR)
+OUTPUT_DIR = $(JEKYLL_DIR)/_org
+
+JEKYLL_CONFIG := $(shell tempfile -s .yml)
+JEKYLL_OPTS += -s $(JEKYLL_DIR) --config $(JEKYLL_CONFIG)
 
 org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
 tangle_org_files := $(shell grep -l '+BEGIN_SRC .* :tangle ' $(ORG_DIR)/*.org)
 tangle_output_files := $(patsubst %.org,$(OUTPUT_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
 org_verbose	= @echo " ORG  " $(?F);
 tangle_verbose	=  echo " CODE " $(?F);
+jekyll_verbose  = @echo " BUILD jekyll";
+serve_verbose   = @echo " SERVE jekyll";
 
 default: all
 
@@ -20,11 +32,39 @@ clean:
 	rm -rf	$(SITE_DIR) \
 		$(OUTPUT_DIR)
 
-jekyll: org-html org-code
-	jekyll build $(JEKYLL_OPTS)
+jekyll-config:
+	@echo "\
+# Site settings \n\
+name: \"$(SITE_NAME)\" \n\
+title: \"$(SITE_TITLE)\" \n\
+email: \"$(SITE_AUTHOR_EMAIL)\" \n\
+description: \"$(SITE_DESCRIPTION)\" \n\
+#baseurl: \"$(SITE_BASEURL)\" \n\
+url: \"$(SITE_URL)\" \n\
+ \n\
+# Build settings \n\
+markdown: kramdown \n\
+permalinks: pretty \n\
+ \n\
+collections: \n\
+  org: \n\
+    output: true \n\
+ \n\
+defaults: \n\
+  - scope: \n\
+      path: \"\" \n\
+    values: \n\
+      layout: \"page\" \n\
+      author: \"$(SITE_AUTHOR)\" \n\
+" > $(JEKYLL_CONFIG)
 
-serve: org-html org-code
-	jekyll serve $(JEKYLL_OPTS)
+jekyll: org-html org-code jekyll-config
+	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
+	@rm $(JEKYLL_CONFIG)
+
+serve: org-html org-code jekyll-config
+	$(serve_verbose) jekyll serve $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
+	@rm $(JEKYLL_CONFIG)
 
 $(OUTPUT_DIR):
 	mkdir -p $(OUTPUT_DIR)
