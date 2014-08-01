@@ -42,7 +42,7 @@ name: \"$(SITE_NAME)\" \n\
 title: \"$(SITE_TITLE)\" \n\
 email: \"$(SITE_AUTHOR_EMAIL)\" \n\
 description: \"$(SITE_DESCRIPTION)\" \n\
-#baseurl: \"$(SITE_BASEURL)\" \n\
+baseurl: \"$(SITE_BASEURL)\" \n\
 url: \"$(SITE_URL)\" \n\
  \n\
 # Build settings \n\

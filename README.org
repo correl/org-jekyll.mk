@@ -11,7 +11,7 @@
      #+BEGIN_SRC makefile
        SITE_NAME = My Projects
        SITE_TITLE = Project breakdowns and TODOs
-       SITE_BASEURL = ~userdir/projects
+       SITE_BASEURL = /~userdir/projects
        SITE_AUTHOR = My Name
        SITE_AUTHOR_EMAIL = me@example.org
 
