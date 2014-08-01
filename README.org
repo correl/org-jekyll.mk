@@ -1,0 +1,9 @@
+#+BEGIN_HTML
+---
+title: Org-Jekyll Publishing
+layout: page
+---
+#+END_HTML
+
+A GNU Makefile and Jekyll template for publishing a folder of org-mode
+files to the web.
