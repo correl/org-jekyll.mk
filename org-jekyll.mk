@@ -14,16 +14,16 @@ tangle_verbose	=  echo " CODE " $(?F);
 
 default: all
 
-all: org-html org-code jekyll
+all: jekyll
 
 clean:
 	rm -rf	$(SITE_DIR) \
 		$(OUTPUT_DIR)
 
-jekyll:
+jekyll: org-html org-code
 	jekyll build $(JEKYLL_OPTS)
 
-serve:
+serve: org-html org-code
 	jekyll serve $(JEKYLL_OPTS)
 
 $(OUTPUT_DIR):
