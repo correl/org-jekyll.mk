@@ -1,0 +1,22 @@
+# Site settings
+name: "Correl Roush's Documents"
+title: "Emacs Org-Mode Documents"
+email: croush@coredial.com
+description:
+baseurl: "/~croush/org"
+url: "http://yourdomain.com"
+
+# Build settings
+markdown: kramdown
+permalinks: pretty
+
+collections:
+  org:
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "page"
+      author: "Correl Roush"
