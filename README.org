@@ -1,9 +1,48 @@
-#+BEGIN_HTML
----
-title: Org-Jekyll Publishing
-layout: page
----
-#+END_HTML
+* Org-Jekyll Publishing
+** Description
+   A GNU Makefile and Jekyll template for publishing a folder of
+   org-mode files to the web.
+** Usage
+   - Clone this repository to a folder named ~org-jekyll~ in your org folder
+     
+   - Create a Makefile in your org folder that includes
+     ~org-jekyll.mk~. Override any variables you want to customize:
 
-A GNU Makefile and Jekyll template for publishing a folder of org-mode
-files to the web.
+     #+BEGIN_SRC makefile
+       SITE_NAME = My Projects
+       SITE_TITLE = Project breakdowns and TODOs
+       SITE_BASEURL = ~userdir/projects
+       SITE_AUTHOR = My Name
+       SITE_AUTHOR_EMAIL = me@example.org
+
+       include org-jekyll/org-jekyll.mk
+
+     #+END_SRC
+
+   - Type ~make~ to build your site, or ~make serve~ to host it
+     
+   - If your org doc includes code blocks using org-babel-tangle, the
+     code will be exported as well! Set the document's layout to ~org~
+     to include a download link at the top of the exported page:
+   
+     #+BEGIN_SRC org
+     ,#+BEGIN_HTML
+     ---
+     title: Code Sample
+     layout: org
+     ---
+     ,#+END_HTML
+
+     ,* Sample Code
+       ,#+BEGIN_SRC scheme :tangle yes
+         (define (fib n)
+           (fib-iter 1 0 n))
+
+         (define (fib-iter a b count)
+           (if (= count 0)
+               b
+               (fib-iter (+ a b) a (- count 1))))
+       ,#+END_SRC
+
+     #+END_SRC
+     
