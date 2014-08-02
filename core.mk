@@ -17,9 +17,8 @@ CODE_DIR = $(BUILD_DIR)/_src
 JEKYLL_CONFIG := $(shell tempfile -s .yml)
 JEKYLL_OPTS += -s $(BUILD_DIR) --config $(JEKYLL_CONFIG)
 
+targets = $(BUILD_DIR) $(SITE_DIR)
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-assets = index.html css _includes _layouts
-asset_targets = $(addprefix $(BUILD_DIR)/,$(assets))
 org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
 tangle_org_files := $(shell grep -il '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
 tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
@@ -40,8 +39,7 @@ default: all
 all: jekyll
 
 clean:
-	rm -rf	$(BUILD_DIR) \
-		$(SITE_DIR)
+	rm -rf $(targets)
 
 jekyll-config:
 	@echo "\
@@ -88,11 +86,6 @@ $(OUTPUT_DIR):
 
 $(CODE_DIR):
 	mkdir -p $@
-
-assets: $(BUILD_DIR) $(asset_targets)
-
-$(asset_targets):
-	cp -a $(addprefix $(dir $(mkfile_path)),$(notdir $@)) $@
 
 $(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
 	$(org_verbose) emacs --batch -u ${USER} --eval " \
