@@ -3,10 +3,9 @@
    A GNU Makefile and Jekyll template for publishing a folder of
    org-mode files to the web.
 ** Usage
-   - Clone this repository to a folder named ~org-jekyll~ in your org folder
-     
-   - Create a Makefile in your org folder that includes
-     ~org-jekyll.mk~. Override any variables you want to customize:
+   - Add the file ~org-jekyll.mk~ to your project, then create a
+     Makefile in your org folder that includes it, overriding any
+     variables you want to customize:
 
      #+BEGIN_SRC makefile
        SITE_NAME = My Projects
@@ -15,7 +14,7 @@
        SITE_AUTHOR = My Name
        SITE_AUTHOR_EMAIL = me@example.org
 
-       include org-jekyll/org-jekyll.mk
+       include org-jekyll.mk
 
      #+END_SRC
 

@@ -1,3 +1,5 @@
+.PHONY: assets.mk org-jekyll.mk all
+
 assets = index.html css _includes _layouts
 targets = assets.mk org-jekyll.mk
 
