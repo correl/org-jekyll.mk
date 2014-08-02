@@ -16,8 +16,8 @@ SITE_DIR ?= _site
 OUTPUT_DIR = $(BUILD_DIR)/_org
 CODE_DIR = $(BUILD_DIR)/_src
 
-JEKYLL_CONFIG := $(shell tempfile -s .yml)
-JEKYLL_OPTS += -s $(BUILD_DIR) --config $(JEKYLL_CONFIG)
+JEKYLL_CONFIG = $(BUILD_DIR)/_config.yml
+JEKYLL_OPTS += -s $(BUILD_DIR)
 
 targets = $(BUILD_DIR) $(SITE_DIR)
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
@@ -33,6 +33,8 @@ tangle_verbose_0	= @echo " CODE " $(?F);
 tangle_verbose		= $(tangle_verbose_$(V))
 jekyll_verbose_0	= @echo " BUILD jekyll";
 jekyll_verbose		= $(jekyll_verbose_$(V))
+config_verbose_0	= @echo " CFG  " $@;
+config_verbose		= $(config_verbose_$(V))
 serve_verbose_0		= @echo " SERVE jekyll";
 serve_verbose		= $(jekyll_verbose_$(V))
 
@@ -43,8 +45,8 @@ all: jekyll
 clean:
 	rm -rf $(targets)
 
-jekyll-config:
-	@echo "\
+$(JEKYLL_CONFIG):
+	$(config_verbose) echo "\
 # Site settings \n\
 name: \"$(SITE_NAME)\" \n\
 title: \"$(SITE_TITLE)\" \n\
@@ -72,15 +74,13 @@ defaults: \n\
     values: \n\
       layout: \"page\" \n\
       author: \"$(SITE_AUTHOR)\" \n\
-" > $(JEKYLL_CONFIG)
+" > $@
 
-jekyll: assets org-html org-code jekyll-config
-	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
-	@rm $(JEKYLL_CONFIG)
+jekyll: assets org-html org-code $(JEKYLL_CONFIG)
+	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS)
 
-serve: assets org-html org-code jekyll-config
-	$(serve_verbose) jekyll serve $(JEKYLL_OPTS) || (rm $(JEKYLL_CONFIG) && false)
-	@rm $(JEKYLL_CONFIG)
+serve: assets org-html org-code $(JEKYLL_CONFIG)
+	$(serve_verbose) jekyll serve $(JEKYLL_OPTS)
 
 $(BUILD_DIR):
 	mkdir -p $@
