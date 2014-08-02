@@ -7,6 +7,8 @@ SITE_BASEURL ?=
 SITE_URL ?=
 SITE_AUTHOR ?=
 SITE_AUTHOR_EMAIL ?=
+SITE_TWITTER ?=
+SITE_GITHUB ?=
 
 ORG_DIR ?= .
 BUILD_DIR ?= _build
@@ -50,6 +52,8 @@ email: \"$(SITE_AUTHOR_EMAIL)\" \n\
 description: \"$(SITE_DESCRIPTION)\" \n\
 baseurl: \"$(SITE_BASEURL)\" \n\
 url: \"$(SITE_URL)\" \n\
+twitter: \"$(SITE_TWITTER)\" \n\
+github: \"$(SITE_GITHUB)\" \n\
  \n\
 # Build settings \n\
 markdown: kramdown \n\

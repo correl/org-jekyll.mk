@@ -13,6 +13,8 @@
        SITE_BASEURL = /~userdir/projects
        SITE_AUTHOR = My Name
        SITE_AUTHOR_EMAIL = me@example.org
+       SITE_GITHUB = username/project
+       SITE_TWITTER = username
 
        include org-jekyll.mk
 
