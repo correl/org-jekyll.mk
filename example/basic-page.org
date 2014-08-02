@@ -1,0 +1,84 @@
+#+BEGIN_HTML
+---
+title: Basic Page
+---
+#+END_HTML
+
+* Publish your documents
+  ~org-publish.mk~ exports your org files to HTML and uses Jekyll to
+  index them and build a website for viewing them. The default Jekyll
+  theme has been enhanced to better style org-mode elements.
+
+** Basic Formatting
+*** Paragraphs
+   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+   quis laoreet orci. Quisque varius laoreet lacinia. Curabitur
+   facilisis turpis non diam commodo pretium. Ut nunc felis,
+   condimentum quis nisi sit amet, tincidunt bibendum tortor. Fusce
+   eget ligula a massa iaculis hendrerit non non ipsum. Aenean
+   fringilla ipsum in lectus interdum rutrum sit amet venenatis
+   orci. Donec vulputate malesuada dignissim. Etiam rutrum urna in
+   vulputate imperdiet. Vestibulum varius pellentesque mauris, vitae
+   malesuada lectus tincidunt in. Etiam a ultrices felis. Morbi
+   vehicula ut dui a ultrices. Nulla ac tincidunt urna, in iaculis
+   metus. Quisque consectetur ante quis felis bibendum, lobortis
+   pellentesque odio tempus. Integer porta odio nisl, vel convallis
+   diam tincidunt ac.
+
+   Aenean eu mollis dolor. Integer posuere lacus ipsum, quis tincidunt
+   diam sollicitudin et. Proin fermentum fermentum tellus at
+   auctor. Cras vulputate hendrerit hendrerit. Phasellus non felis eu
+   nisl aliquam consectetur. Fusce ac lacus magna. Suspendisse turpis
+   purus, consequat sed sem eget, scelerisque viverra massa. Nullam
+   luctus elit quam, eu accumsan purus malesuada sed. Maecenas mollis
+   ac sem quis aliquam. Pellentesque vitae mi et arcu venenatis
+   ullamcorper vel eget nulla. Nulla ac ipsum orci.
+
+   ----------------------------------------------------------------------
+   
+   Suspendisse at tellus erat. Proin faucibus lorem congue mi suscipit
+   vulputate. Vestibulum et sodales magna, vel vestibulum
+   risus. Aenean nec fringilla mauris. Pellentesque nisl tellus,
+   tristique et interdum a, hendrerit nec velit. Donec quis pretium
+   velit. Maecenas in fringilla sapien, vel adipiscing velit. Etiam
+   mollis nunc eu leo molestie, quis mattis mi venenatis. Cras semper
+   ornare sapien eget porttitor. Sed ultricies viverra
+   imperdiet. Vestibulum dictum ipsum a urna scelerisque, ac pharetra
+   sem placerat. Fusce commodo sapien eu risus blandit, sed tempus leo
+   feugiat. Etiam tempor justo eget euismod rutrum. Aliquam tincidunt
+   et eros et consectetur. Nunc consectetur orci id vulputate
+   tempor. Class aptent taciti sociosqu ad litora torquent per conubia
+   nostra, per inceptos himenaeos.
+
+*** Formatting
+  | Formatting      | Example           |
+  |-----------------+-------------------|
+  | Bold Text       | *bold text*       |
+  | Italicized text | /italicized text/ |
+  | Monospaced text | ~monospaced text~ |
+
+** Block elements
+*** Example
+   #+BEGIN_EXAMPLE
+     $ make
+     mkdir -p _build
+     Extracting assets to _build
+     mkdir -p _build/_org
+      ORG   sample.org
+      ORG   sample-with-code.org
+     mkdir -p _build/_src
+      CODE  sample-with-code.org
+      BUILD jekyll
+     Notice: for 10x faster LSI support, please install http://rb-gsl.rubyforge.org/
+     Configuration file: /tmp/fileIAcamX.yml
+                 Source: _build
+            Destination: /home/correlr/code/org-jekyll/example/_site
+           Generating... 
+                         done.
+   #+END_EXAMPLE
+*** List
+    - Item 1
+      1. Subitem 1
+      2. Subitem 2
+    - Item 2
+    - Item 3
