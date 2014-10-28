@@ -1,9 +1,5 @@
-#+BEGIN_HTML
----
-title: Code Sample
-layout: org
----
-#+END_HTML
+#+TITLE: Code Sample
+#+AUTHOR: Correl J. Roush <correl@gmail.com>
 
 * Sample Code
   #+BEGIN_SRC scheme :tangle yes

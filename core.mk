@@ -69,16 +69,13 @@ permalinks: pretty \n\
 collections: \n\
   org: \n\
     output: true \n\
-  src: \n\
-    output: true \n\
  \n\
 defaults: \n\
   - scope: \n\
-      path: \"\" \n\
+      path: \"\"\n\
       type: \"org\" \n\
     values: \n\
-      layout: \"page\" \n\
-      author: \"$(SITE_AUTHOR)\" \n\
+      layout: \"org\" \n\
 " > $(JEKYLL_CONFIG)
 
 build: assets org jekyll-config
@@ -113,11 +110,27 @@ $(ORG_ASSET_DIR)/%.html: $(ORG_ASSET_DIR)/%.org
 	$(org_verbose) emacs --batch -u ${USER} --eval " \
 (progn \
   (require 'org) \
+  (require 'ox) \
   \
   (org-babel-do-load-languages \
    'org-babel-load-languages \
     '($(load_languages))) \
   (setq org-confirm-babel-evaluate nil) \
+  \
+  (defun org-jekyll.mk/inject-frontmatter (string backend info) \
+    (when (and (org-export-derived-backend-p backend 'html) \
+               (not (eq 0 (string-match \"---\" string)))) \
+      (let ((title (org-export-data (plist-get info :title) info)) \
+            (author (org-export-data (plist-get info :author) info))) \
+        (replace-regexp-in-string (rx buffer-start) \
+                                  (concat \"---\\n\" \
+                                          (format \"title: \\\"%s\\\"\\n\" title) \
+                                          (format \"author: \\\"%s\\\"\\n\" author) \
+                                          \"---\\n\") \
+                                  string)))) \
+  (add-to-list 'org-export-filter-final-output-functions \
+               'org-jekyll.mk/inject-frontmatter) \
+  \
   (setq org-publish-project-alist \
         '( \
           (\"org-jekyll\" \

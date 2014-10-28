@@ -1,8 +1,5 @@
-#+BEGIN_HTML
----
-title: Basic Page
----
-#+END_HTML
+#+TITLE: Basic Page
+#+AUTHOR: Correl J. Roush <correl@gmail.com>
 
 * Publish your documents
   ~org-publish.mk~ exports your org files to HTML and uses Jekyll to

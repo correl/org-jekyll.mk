@@ -9,9 +9,11 @@ layout: default
 
   <header class="post-header">
     <h1>{{ page.title }}</h1>
-    <hr />
-    Download the Org-Mode source for this page: <a class="post-link" href="{{ org_url }}">{{ org_filename }}</a>
-    <hr />
+    <p class="meta">
+      {% if page.author %}{{ page.author }}{% endif %}
+      <span class="download">
+        Download the Org-Mode source for this page: <a class="post-link" href="{{ org_url }}">{{ org_filename }}</a></span>
+    </p>
   </header>
 
   <article class="post-content">
