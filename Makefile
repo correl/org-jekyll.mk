@@ -17,7 +17,8 @@ assets.mk:
 assets_verbose_0 = @echo Extracting assets to \$$(BUILD_DIR);\n\
 assets_verbose   = \$$(assets_verbose_\$$(V))\n\
 \n\
-assets: \$$(BUILD_DIR)\n\
+assets:\n\
+	\t@mkdir -p \$$(BUILD_DIR)\n\
 	\t\$$(assets_verbose) \
 	echo '' \\" > $@; \
 	tar zc -C assets $(assets) \

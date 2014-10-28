@@ -22,29 +22,31 @@
 
    - Type ~make~ to build your site, or ~make serve~ to host it
      
-   - If your org doc includes code blocks using org-babel-tangle, the
-     code will be exported as well! Set the document's layout to ~org~
-     to include a download link at the top of the exported page:
+   - Set the document's layout to ~org~ to include a download link for
+     the original .org file at the top of the exported page
+
+   - To evaluate source blocks
    
      #+BEGIN_SRC org
-     ,#+BEGIN_HTML
-     ---
-     title: Code Sample
-     layout: org
-     ---
-     ,#+END_HTML
+       ,#+BEGIN_HTML
+       ---
+       title: Code Sample
+       layout: org
+       ---
+       ,#+END_HTML
 
-     ,* Sample Code
-       ,#+BEGIN_SRC scheme :tangle yes
-         (define (fib n)
-           (fib-iter 1 0 n))
+       ,* Sample Code
+         ,#+BEGIN_SRC scheme :tangle sample.scm
+           (define (fib n)
+             (fib-iter 1 0 n))
 
-         (define (fib-iter a b count)
-           (if (= count 0)
-               b
-               (fib-iter (+ a b) a (- count 1))))
-       ,#+END_SRC
+           (define (fib-iter a b count)
+             (if (= count 0)
+                 b
+                 (fib-iter (+ a b) a (- count 1))))
+         ,#+END_SRC
 
+         Download source: [[file:sample.scm]]
      #+END_SRC
      
    - Setting the environment variable V to a value other than 0 will display

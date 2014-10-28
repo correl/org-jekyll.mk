@@ -19,3 +19,12 @@ layout: org
           b
           (fib-iter (+ a b) a (- count 1))))
   #+END_SRC
+
+  Download source: [[file:code-sample.scheme]]
+* Sample Graph
+  #+BEGIN_SRC dot :file sample.svg :cmdline -Kdot -Tsvg :exports both
+    digraph {
+            a -> {b,c};
+            {a,b} -> d;
+    }
+  #+END_SRC

@@ -13,23 +13,28 @@ SITE_GITHUB ?=
 ORG_DIR ?= .
 BUILD_DIR ?= _build
 SITE_DIR ?= _site
-OUTPUT_DIR = $(BUILD_DIR)/_org
-CODE_DIR = $(BUILD_DIR)/_src
+BABEL_LANGUAGES ?= emacs-lisp
 
 JEKYLL_CONFIG = $(BUILD_DIR)/_config.yml
 JEKYLL_OPTS += -s $(BUILD_DIR)
 
+ORG_BUILD_DIR = $(BUILD_DIR)/_org
+ORG_ASSET_DIR = $(BUILD_DIR)/org
+
 targets = $(BUILD_DIR) $(SITE_DIR)
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-org_files := $(patsubst %.org,$(OUTPUT_DIR)/%.html,$(notdir $(wildcard $(ORG_DIR)/*.org)))
-tangle_org_files := $(shell grep -il '+BEGIN_SRC .* :tangle yes' $(ORG_DIR)/*.org)
-tangle_output_files := $(patsubst %.org,$(CODE_DIR)/%.src.txt,$(notdir $(tangle_org_files)))
-tangle_tmp := $(shell tempfile -s .org)
+org_files := $(wildcard $(ORG_DIR)/*.org)
+tangle_org_files := $(addprefix $(ORG_ASSET_DIR)/,$(notdir $(shell grep -l ':tangle ' $(org_files))))
+org_asset_files := $(addprefix $(ORG_ASSET_DIR)/,$(notdir $(org_files)))
+html_files := $(patsubst %.org,$(ORG_BUILD_DIR)/%.html,$(notdir $(org_files)))
+load_languages := $(shell echo "$(BABEL_LANGUAGES)" | sed -r 's/(\S+)/\(\1 . ''t\)/g')
 
 V ?= 0
-org_verbose_0		= @echo " ORG  " $(?F);
+stderr_verbose_0	= 2>/dev/null
+stderr_verbose		= $(stderr_verbose_$(V))
+org_verbose_0		= @echo " ORG  " $<;
 org_verbose		= $(org_verbose_$(V))
-tangle_verbose_0	= @echo " CODE " $(?F);
+tangle_verbose_0	= @echo " CODE " $(1);
 tangle_verbose		= $(tangle_verbose_$(V))
 jekyll_verbose_0	= @echo " BUILD jekyll";
 jekyll_verbose		= $(jekyll_verbose_$(V))
@@ -40,7 +45,7 @@ serve_verbose		= $(jekyll_verbose_$(V))
 
 default: all
 
-all: jekyll
+all: build
 
 clean:
 	rm -rf $(targets)
@@ -76,33 +81,50 @@ defaults: \n\
       author: \"$(SITE_AUTHOR)\" \n\
 " > $@
 
-jekyll: assets org-html org-code $(JEKYLL_CONFIG)
+build: assets org $(JEKYLL_CONFIG)
 	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS)
 
-serve: assets org-html org-code $(JEKYLL_CONFIG)
+serve: assets org $(JEKYLL_CONFIG)
 	$(serve_verbose) jekyll serve $(JEKYLL_OPTS)
 
-$(BUILD_DIR):
-	mkdir -p $@
+org: $(org_asset_files) $(html_files)
 
-$(OUTPUT_DIR):
-	mkdir -p $@
+$(ORG_BUILD_DIR)/%.html: $(ORG_ASSET_DIR)/%.html
+	@mkdir -p $(@D)
+	@mv $< $@
 
-$(CODE_DIR):
-	mkdir -p $@
+$(ORG_ASSET_DIR)/%.org: $(ORG_DIR)/%.org
+	@mkdir -p $(@D)
+	@cp $< $@
 
-$(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
+define tangle
+	$(tangle_verbose) emacs --batch -u ${USER} \
+		--eval " \
+(progn \
+  (require 'org) \
+  (org-babel-do-load-languages \
+   'org-babel-load-languages \
+    '($(load_languages))) \
+  (org-babel-tangle-file \"$(1)\"))" $(stderr_verbose)
+endef
+
+$(ORG_ASSET_DIR)/%.html: $(ORG_ASSET_DIR)/%.org
+	$(if $(shell grep ':tangle ' $<),$(call tangle,$<))
 	$(org_verbose) emacs --batch -u ${USER} --eval " \
 (progn \
   (require 'org) \
   \
+  (org-babel-do-load-languages \
+   'org-babel-load-languages \
+    '($(load_languages))) \
+  (setq org-confirm-babel-evaluate nil) \
   (setq org-publish-project-alist \
         '( \
           (\"org-jekyll\" \
            :base-directory \".\" \
            :base-extension \"org\" \
   \
-           :publishing-directory \"$(abspath $(OUTPUT_DIR))\" \
+           :publishing-directory \"$(abspath $(@D))\" \
            :recursive t \
            :publishing-function org-html-publish-to-html \
            :headline-levels 4 \
@@ -110,147 +132,139 @@ $(OUTPUT_DIR)/%.html: $(ORG_DIR)/%.org
            :html-extension \"html\" \
            :htmlized-source t \
            :with-toc nil \
-           :body-only t) \
+           :body-only t \
+           :babel-evaluate t) \
           (\"jekyll\" :components (\"org-jekyll\")))) \
   \
   (find-file \"$<\") \
   (org-publish-current-file 't)) \
-" 2>/dev/null
-
-$(CODE_DIR)/%.src.txt: $(ORG_DIR)/%.org
-	@sed "s/:tangle yes/:tangle $(subst /,\/,$(abspath $@))/g" "$<" > $(tangle_tmp)
-	$(tangle_verbose) emacs	--batch -u ${USER} \
-		--eval "(require 'org)" \
-		--eval "(org-babel-tangle-file \"$(tangle_tmp)\")" 2>/dev/null ;
-	@rm $(tangle_tmp)
-
-org-html: $(OUTPUT_DIR) $(org_files)
-org-code: $(CODE_DIR) $(tangle_output_files)
+" $(stderr_verbose)
 
 .PHONY: assets
 
 assets_verbose_0 = @echo Extracting assets to $(BUILD_DIR);
 assets_verbose   = $(assets_verbose_$(V))
 
-assets: $(BUILD_DIR)
+assets:
+	@mkdir -p $(BUILD_DIR)
 	$(assets_verbose) echo '' \
 		'begin-base64 664 -\n'\
-		'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\n'\
+		'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\n'\
+		'AHgAAA==\n'\
 		'====\n'\
 	 | sed 's/^ //' | uudecode | tar zx -C $(BUILD_DIR)

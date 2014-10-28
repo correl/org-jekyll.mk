@@ -2,15 +2,15 @@
 layout: default
 ---
 
-{% assign scheme_filename = page.url | replace: '.html','.src.txt' | remove: '/org/' %}
-{% assign scheme_url = scheme_filename | prepend: '/src/' %}
+{% assign org_url = page.url | replace: '.html','.org' %}
+{% assign org_filename = org_url | split: '/' | last %}
 
 <div class="post">
 
   <header class="post-header">
     <h1>{{ page.title }}</h1>
     <hr />
-    Download the code samples shown below: <a class="post-link" href="{{ scheme_url }}">{{ scheme_filename }}</a>
+    Download the Org-Mode source for this page: <a class="post-link" href="{{ org_url }}">{{ org_filename }}</a>
     <hr />
   </header>
 
