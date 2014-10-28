@@ -50,7 +50,7 @@ all: build
 clean:
 	rm -rf $(targets)
 
-$(JEKYLL_CONFIG):
+jekyll-config:
 	$(config_verbose) echo "\
 # Site settings \n\
 name: \"$(SITE_NAME)\" \n\
@@ -79,12 +79,12 @@ defaults: \n\
     values: \n\
       layout: \"page\" \n\
       author: \"$(SITE_AUTHOR)\" \n\
-" > $@
+" > $(JEKYLL_CONFIG)
 
-build: assets org $(JEKYLL_CONFIG)
+build: assets org jekyll-config
 	$(jekyll_verbose) jekyll build $(JEKYLL_OPTS)
 
-serve: assets org $(JEKYLL_CONFIG)
+serve: assets org jekyll-config
 	$(serve_verbose) jekyll serve $(JEKYLL_OPTS)
 
 org: $(org_asset_files) $(html_files)
